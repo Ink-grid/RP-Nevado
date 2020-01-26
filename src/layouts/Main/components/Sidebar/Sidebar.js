@@ -1,18 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import PeopleIcon from '@material-ui/icons/People';
-import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
-import TextFieldsIcon from '@material-ui/icons/TextFields';
-import ImageIcon from '@material-ui/icons/Image';
-import AccountBoxIcon from '@material-ui/icons/AccountBox';
-import SettingsIcon from '@material-ui/icons/Settings';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-
-import { Profile, SidebarNav, UpgradePlan } from './components';
+import { StoreContext } from '../../../../context/StoreContext';
+import { useGet } from '../../../../services/useService';
+import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles(theme => ({
   drawer: {
@@ -38,52 +31,18 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
+  const { state } = useContext(StoreContext);
+  const [data] = useGet(
+    `http://localhost:3001/api/users/${state.user.displayName}`
+  );
+
   const { open, variant, onClose, className, ...rest } = props;
 
   const classes = useStyles();
 
-  const pages = [
-    {
-      title: 'Dashboard',
-      href: '/dashboard',
-      icon: <DashboardIcon />
-    },
-    {
-      title: 'Users',
-      href: '/users',
-      icon: <PeopleIcon />
-    },
-    {
-      title: 'Products',
-      href: '/products',
-      icon: <ShoppingBasketIcon />
-    },
-    {
-      title: 'Authentication',
-      href: '/sign-in',
-      icon: <LockOpenIcon />
-    },
-    {
-      title: 'Typography',
-      href: '/typography',
-      icon: <TextFieldsIcon />
-    },
-    {
-      title: 'Icons',
-      href: '/icons',
-      icon: <ImageIcon />
-    },
-    {
-      title: 'Account',
-      href: '/account',
-      icon: <AccountBoxIcon />
-    },
-    {
-      title: 'Settings',
-      href: '/settings',
-      icon: <SettingsIcon />
-    }
-  ];
+  if (!data) {
+    return <div>cargando .</div>;
+  }
 
   return (
     <Drawer
@@ -101,9 +60,8 @@ const Sidebar = props => {
         <Divider className={classes.divider} />
         <SidebarNav
           className={classes.nav}
-          pages={pages}
+          pages={data.data}
         />
-        <UpgradePlan />
       </div>
     </Drawer>
   );

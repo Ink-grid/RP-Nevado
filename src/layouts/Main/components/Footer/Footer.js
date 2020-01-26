@@ -24,17 +24,14 @@ const Footer = props => {
         &copy;{' '}
         <Link
           component="a"
-          href="https://devias.io/"
+          href="/#"
           target="_blank"
         >
-          Devias IO
+          Ink-grid
         </Link>
-        . 2019
+        . 2020 All rights reserved.
       </Typography>
-      <Typography variant="caption">
-        Created with love for the environment. By designers and developers who
-        love to work together in offices!
-      </Typography>
+      <Typography variant="caption">Rony cb</Typography>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
+import { getIcons } from '../../../../../../utils/Libs';
 import { List, ListItem, Button, colors } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -50,6 +51,16 @@ const CustomRouterLink = forwardRef((props, ref) => (
 ));
 
 const SidebarNav = props => {
+  // const getIcons = icon => {
+  //   switch (icon) {
+  //     case 'inventario':
+  //       return <AssignmentIcon />;
+
+  //     default:
+  //       break;
+  //   }
+  // };
+
   const { pages, className, ...rest } = props;
 
   const classes = useStyles();
@@ -71,7 +82,7 @@ const SidebarNav = props => {
             component={CustomRouterLink}
             to={page.href}
           >
-            <div className={classes.icon}>{page.icon}</div>
+            <div className={classes.icon}>{getIcons(page.icon)}</div>
             {page.title}
           </Button>
         </ListItem>
