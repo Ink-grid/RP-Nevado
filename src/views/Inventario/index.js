@@ -3,7 +3,6 @@ import MaterialTable from 'material-table';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import {
-  ModuleInventario,
   FloatingActionButtons
 } from '../../components/ModuleInventario/';
 import { storage } from '../../utils/firebase';
@@ -31,7 +30,7 @@ const Inventario = () => {
   }
  
   const [data, setRefresh, setData] = useGet(
-    'http://localhost:3001/api/products'
+    'https://pacific-mesa-11643.herokuapp.com/api/products'
   );
 
   const [open, setOpen] = useState({
@@ -52,6 +51,7 @@ const Inventario = () => {
         />
       ), render: rowData => (
         <img
+          alt="ink-grid"
           style={{ height: 36, borderRadius: '50%' }}
           src={rowData.image}
         />
@@ -174,7 +174,7 @@ const Inventario = () => {
               // console.log(newData)
               setTimeout(async () => {
                 resolve();
-              const result =  await post('http://localhost:3001/api/products', newData)
+              const result =  await post('https://pacific-mesa-11643.herokuapp.com/api/products', newData)
                 
                if (result.status) {
                   setOpen({severity: 'success', open: true, message: result.message});
@@ -198,7 +198,7 @@ const Inventario = () => {
                     data[data.indexOf(oldData)] = newData;
                     return { ...prevState, data };
                   });
-                  const response = await patch('http://localhost:3001/api/products', newData)
+                  const response = await patch('https://pacific-mesa-11643.herokuapp.com/api/products', newData)
                   if(response.status){
                     setOpen({severity: 'success', open: true, message: response.message});
                   }else{
@@ -211,7 +211,7 @@ const Inventario = () => {
             new Promise(resolve => {
               setTimeout( async () => {
                 resolve();
-                const respo = await deleted(`http://localhost:3001/api/product/${oldData.cod_producto}`)
+                const respo = await deleted(`https://pacific-mesa-11643.herokuapp.com/api/product/${oldData.cod_producto}`)
                 if(respo.status){
                   setOpen({severity: 'success', open: true, message: respo.message});
                 }else{
@@ -240,10 +240,28 @@ const Inventario = () => {
             tooltip: 'Refresh Data',
             isFreeAction: true,
             onClick: () => setRefresh(Math.random()) ,
+          },
+          {
+            tooltip: 'Remove All Selected Users',
+            icon: 'delete',
+            onClick: async (evt, data) => {
+                    let arra = []
+                    data.map(eleme => {
+                      arra.push(eleme.cod_producto)
+                    })
+                    const respo = await deleted(`https://pacific-mesa-11643.herokuapp.com/api/product/${arra}`)
+                    if(respo.status){
+                      setOpen({severity: 'success', open: true, message: respo.message});
+                      setRefresh(Math.random())
+                    }else{
+                      setOpen({open: true, message: respo.message, severity: 'error'});
+                    }
+            }
           }
         ]}
         options={{
-          exportButton: true
+          exportButton: true,
+          selection: true
         }}
         title="Listado de productos en inventario"
       />

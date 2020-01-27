@@ -27,8 +27,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ModuleInventario = props => {
-  const [data, setRefresh, setData] = useGet(
-    `http://localhost:3001/api/products/${props.codigo}`
+  const [data, setRefresh] = useGet(
+    `https://pacific-mesa-11643.herokuapp.com/api/products/${props.codigo}`
   );
   const classes = useStyles();
 

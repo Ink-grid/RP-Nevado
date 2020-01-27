@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link as RouterLink, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import Alert from '@material-ui/lab/Alert';
 import { StoreContext } from '../../context/StoreContext';
 import { auth } from '../../utils/firebase';
@@ -150,7 +150,7 @@ const SignIn = props => {
         actions.setUser(respo.user);
         actions.setLogin(true);
 
-        props.history.push('/')
+        props.history.push('/');
         //window.location = '/';
 
         setLoading(false);
@@ -237,21 +237,21 @@ const SignIn = props => {
                 className={classes.quoteText}
                 variant="h1"
               >
-                Hella narwhal Cosby sweater McSweeney's, salvia kitsch before
-                they sold out High Life.
+                Nevado Construyendo oportunidades de negocio en la industria del
+                calzado.
               </Typography>
               <div className={classes.person}>
                 <Typography
                   className={classes.name}
                   variant="body1"
                 >
-                  Takamaru Ayako
+                  RP-nevado
                 </Typography>
                 <Typography
                   className={classes.bio}
                   variant="body2"
                 >
-                  Manager at inVision
+                   power by &copy;{' '} ink-grid 2020
                 </Typography>
               </div>
             </div>

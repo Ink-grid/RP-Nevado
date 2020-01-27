@@ -1,11 +1,14 @@
 /* eslint-disable react/no-multi-comp */
 /* eslint-disable react/display-name */
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useContext } from 'react';
 import { NavLink as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { getIcons } from '../../../../../../utils/Libs';
+import { useGet } from '../../../../../../services/useService';
+import { StoreContext } from '../../../../../../context/StoreContext';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { List, ListItem, Button, colors } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -51,26 +54,27 @@ const CustomRouterLink = forwardRef((props, ref) => (
 ));
 
 const SidebarNav = props => {
-  // const getIcons = icon => {
-  //   switch (icon) {
-  //     case 'inventario':
-  //       return <AssignmentIcon />;
 
-  //     default:
-  //       break;
-  //   }
-  // };
+  const { state } = useContext(StoreContext);
+
+  const [data] = useGet(
+    `https://pacific-mesa-11643.herokuapp.com/api/users/${state.user.displayName}`
+  );
 
   const { pages, className, ...rest } = props;
 
   const classes = useStyles();
+
+  if(!data){
+    return <div style={{textAlign: "center"}}> <CircularProgress /> </div>
+  }
 
   return (
     <List
       {...rest}
       className={clsx(classes.root, className)}
     >
-      {pages.map(page => (
+      {data.data.map(page => (
         <ListItem
           className={classes.item}
           disableGutters

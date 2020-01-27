@@ -1,10 +1,8 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { Divider, Drawer } from '@material-ui/core';
-import { StoreContext } from '../../../../context/StoreContext';
-import { useGet } from '../../../../services/useService';
 import { Profile, SidebarNav } from './components';
 
 const useStyles = makeStyles(theme => ({
@@ -31,18 +29,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Sidebar = props => {
-  const { state } = useContext(StoreContext);
-  const [data] = useGet(
-    `http://localhost:3001/api/users/${state.user.displayName}`
-  );
 
   const { open, variant, onClose, className, ...rest } = props;
 
   const classes = useStyles();
-
-  if (!data) {
-    return <div>cargando .</div>;
-  }
 
   return (
     <Drawer
@@ -60,7 +50,7 @@ const Sidebar = props => {
         <Divider className={classes.divider} />
         <SidebarNav
           className={classes.nav}
-          pages={data.data}
+          //pages={data.data}
         />
       </div>
     </Drawer>

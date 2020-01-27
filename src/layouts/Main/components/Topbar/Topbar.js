@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
 
 const Topbar = props => {
   const { className, onSidebarOpen, ...rest } = props;
-  const { state, actions } = useContext(StoreContext);
+  const { actions } = useContext(StoreContext);
   const classes = useStyles();
 
   const [notifications] = useState([]);
@@ -34,7 +34,7 @@ const Topbar = props => {
       await auth().signOut();
       actions.setLogin(false);
       actions.setUser({ displayName: null });
-      window.location = '/';
+      //window.location = '/';
     } catch (error) {
       alert(error);
     }
@@ -46,14 +46,16 @@ const Topbar = props => {
       className={clsx(classes.root, className)}
     >
       <Toolbar>
+        <div style={{width: "195px", textAlign: "center"}}>
         <RouterLink to="/">
           <img
             alt="Logo"
-            height="65"
+            height="66"
             src="https://firebasestorage.googleapis.com/v0/b/ink-grid.appspot.com/o/edicion%20de%20nevado-27.png?alt=media&token=f347cf7d-81e5-4dd2-a150-a76ba01d9e6f"
-            width="140"
+            width="115"
           />
         </RouterLink>
+        </div>
         <div className={classes.flexGrow} />
         <Hidden mdDown>
           <IconButton color="inherit">
@@ -68,8 +70,9 @@ const Topbar = props => {
           <IconButton
             className={classes.signOutButton}
             color="inherit"
+            onClick={() => logout()}
           >
-            <InputIcon onClick={() => logout()} />
+            <InputIcon  />
           </IconButton>
         </Hidden>
         <Hidden lgUp>
