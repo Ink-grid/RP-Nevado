@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -7,11 +7,9 @@ import {
 } from '../../components/ModuleInventario/';
 import { storage } from '../../utils/firebase';
 import Backdrop from '@material-ui/core/Backdrop';
+import VpnKeyIcon from '@material-ui/icons/VpnKey';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useGet, post, patch, deleted } from '../../services/useService';
-
-
-
 
 const Inventario = () => {
 
@@ -28,6 +26,8 @@ const Inventario = () => {
     return url
     
   }
+
+  
  
   const [data, setRefresh, setData] = useGet(
     'https://pacific-mesa-11643.herokuapp.com/api/products'
@@ -40,13 +40,11 @@ const Inventario = () => {
   });
   const [cod_prodcu, setCodigo] = useState(null);
   const [entrada, setEntrada] = useState(false);
-  const [state] = useState({
+  const [state, setState] = useState({
     columns: [
       { title: 'Imagen', field: 'imagen', editComponent: props => (
-        // <input type="file" name="myFile"></input>
         <input
           type="file"
-          // value={props.value}
           onChange={e => props.onChange(getUrlImage(e.target.files[0]))}
         />
       ), render: rowData => (
@@ -59,7 +57,7 @@ const Inventario = () => {
       {
         title: 'Codigo Producto',
         field: 'cod_producto',
-        editable: 'onUpdate'
+        editable: 'onUpdate' 
       },
      
       { title: 'Marca', field: 'marca', initialEditValue: 'NEVADO' },
@@ -170,7 +168,9 @@ const Inventario = () => {
         editable={{
           onRowAdd: newData =>
             new Promise(resolve => {
+              if(!newData.cod_producto){
               newData.cod_producto = generateSku(newData)
+              }
               // console.log(newData)
               setTimeout(async () => {
                 resolve();
@@ -242,7 +242,49 @@ const Inventario = () => {
             onClick: () => setRefresh(Math.random()) ,
           },
           {
-            tooltip: 'Remove All Selected Users',
+            icon: () => <VpnKeyIcon/>,
+            tooltip: 'Activar codigo personalizado',
+            isFreeAction: true,
+            onClick: () => setState({
+              columns: [
+                { title: 'Imagen', field: 'imagen', editComponent: props => (
+                  // <input type="file" name="myFile"></input>
+                  <input
+                    type="file"
+                    // value={props.value}
+                    onChange={e => props.onChange(getUrlImage(e.target.files[0]))}
+                  />
+                ), render: rowData => (
+                  <img
+                    alt="ink-grid"
+                    style={{ height: 36, borderRadius: '50%' }}
+                    src={rowData.image}
+                  />
+                ), },
+                {
+                  title: 'Codigo Producto',
+                  field: 'cod_producto',
+                },
+               
+                { title: 'Marca', field: 'marca', initialEditValue: 'NEVADO' },
+                
+                {
+                  title: 'Tipo de producto',
+                  field: 'tipo_producto',
+                  initialEditValue: 'ZAPATO CUERO'
+                },
+                { title: 'Categoria', field: 'categoria', initialEditValue: 'BOTIN' },
+                { title: 'Modelo', field: 'modelo', initialEditValue: 'VARON_ADULTO' },
+                { title: 'Color', field: 'color' },
+                { title: 'Planta', field: 'planta', initialEditValue: 'CAT' },
+                { title: 'Talla', field: 'talla', type: 'numeric' },
+                { title: 'Min', field: 'min', type: 'numeric', initialEditValue: 100 },
+                { title: 'Max', field: 'max', type: 'numeric', initialEditValue: 500 }
+              ]
+            })
+          },
+          {
+            tooltip: 'Eliminar todos los productos selecionados',
             icon: 'delete',
             onClick: async (evt, data) => {
                     let arra = []
