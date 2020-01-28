@@ -4,9 +4,7 @@ import { StoreContext } from './context/StoreContext';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
 import Inventario from './views/Inventario/';
 
-import {Clientes,InventarioTienda,Pedidos,Ventas} from './views/tienda/';
-
-
+import { Clientes, InventarioTienda, Pedidos, Ventas } from './views/tienda/';
 
 import {
   SignIn as SignInView,
@@ -78,7 +76,7 @@ const Routes = () => {
         />
         <Route
           exact
-          path="/sales"
+          path="/sales-shop"
           render={() =>
             state.login ? (
               <MainLayout>
