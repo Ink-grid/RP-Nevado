@@ -4,6 +4,8 @@ import { StoreContext } from './context/StoreContext';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
 import Inventario from './views/Inventario/';
 
+import {Clientes,InventarioTienda,Pedidos,Ventas} from './views/tienda';
+
 import {
   SignIn as SignInView,
   SignUp as SignUpView,
@@ -58,6 +60,60 @@ const Routes = () => {
             )
           }
         />
+        {/*rutas de tienda */}
+        <Route
+          exact
+          path="/inventory"
+          render={() =>
+            state.login ? (
+              <MainLayout>
+                <InventarioTienda />
+              </MainLayout>
+            ) : (
+              <SignInView />
+            )
+          }
+        />
+        <Route
+          exact
+          path="/sales"
+          render={() =>
+            state.login ? (
+              <MainLayout>
+                <Ventas />
+              </MainLayout>
+            ) : (
+              <SignInView />
+            )
+          }
+        />
+        <Route
+          exact
+          path="/orders"
+          render={() =>
+            state.login ? (
+              <MainLayout>
+                <Pedidos />
+              </MainLayout>
+            ) : (
+              <SignInView />
+            )
+          }
+        />
+        <Route
+          exact
+          path="/clientes"
+          render={() =>
+            state.login ? (
+              <MainLayout>
+                <Clientes />
+              </MainLayout>
+            ) : (
+              <SignInView />
+            )
+          }
+        />
+        {/*fin rutas de tienda */}
         <Redirect to="/not-found" />
       </Switch>
     </BrowserRouter>
