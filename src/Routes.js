@@ -2,14 +2,10 @@ import React, { useContext } from 'react';
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import { StoreContext } from './context/StoreContext';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
-<<<<<<< HEAD
-import Inventario from './views/Inventario/';
+//import Inventario from './views/Inventario/';
 
-=======
-import { Inventario, Compras, Entregas, PedidosAlmacen } from './views/Almacen';
->>>>>>> branch-a
 import { Clientes, InventarioTienda, Pedidos, Ventas } from './views/tienda/';
-
+import { Inventario, Compras, Entregas } from './views/Almacen/';
 import {
   SignIn as SignInView,
   SignUp as SignUpView,

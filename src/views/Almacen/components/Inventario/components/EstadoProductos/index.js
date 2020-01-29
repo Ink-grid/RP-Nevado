@@ -1,13 +1,43 @@
 import React, { useState } from 'react';
 import MaterialTable from 'material-table';
+import { makeStyles } from '@material-ui/core/styles';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import { useGet } from '../../../../../../services/useService';
+
+const useStyles = makeStyles({
+  status: {
+    color: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)'
+  }
+});
 
 const EstadoProductos = () => {
+  const classes = useStyles();
   const [columns] = useState([
-    { title: 'Cod. Producto', field: 'cod_producto' },
-    { title: 'Estado', field: 'status' }
+    {
+      title: 'Cod. Producto',
+      field: 'cod_producto'
+    },
+    {
+      title: 'Estado',
+      field: 'status',
+      render: rowData => (
+        <LinearProgress
+          className={classes.status}
+          value={rowData.status}
+          variant="determinate"
+        />
+      )
+    }
   ]);
 
-  const [data, setData] = useState([]);
+  const [data, setRefresh, setData] = useGet(
+    'https://pacific-mesa-11643.herokuapp.com/api/products/ventas/list'
+  );
+
+  if(!data){
+      return <div>cargdndo... </div>
+  }
+ 
   return (
     <MaterialTable
       actions={[
@@ -19,7 +49,7 @@ const EstadoProductos = () => {
         }
       ]}
       columns={columns}
-      data={data}
+      data={data.data}
       localization={{
         pagination: {
           labelRowsSelect: 'filas'
