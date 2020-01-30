@@ -118,7 +118,7 @@ const AddEntradas = props => {
     };
     setProgress(true);
     try {
-      const response = await fetch('http://localhost:3001/api/compras', {
+      const response = await fetch('https://pacific-mesa-11643.herokuapp.com/api/compras', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

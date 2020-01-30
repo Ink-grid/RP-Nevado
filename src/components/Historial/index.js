@@ -4,7 +4,7 @@ import MaterialTable from 'material-table';
 
 const Historial = props => {
   const [data, setRefresh, setData] = useGet(
-    `http://localhost:3001/api/products/historial/${props.codigo}`
+    `https://pacific-mesa-11643.herokuapp.com/api/products/historial/${props.codigo}`
   );
 
   const entrada = {

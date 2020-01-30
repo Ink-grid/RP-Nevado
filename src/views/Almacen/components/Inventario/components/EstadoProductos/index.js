@@ -1,17 +1,36 @@
 import React, { useState } from 'react';
 import MaterialTable from 'material-table';
 import { makeStyles } from '@material-ui/core/styles';
-import LinearProgress from '@material-ui/core/LinearProgress';
-import { useGet } from '../../../../../../services/useService';
+import { useGet } from 'services';
+import { StatusBullet } from 'components';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   status: {
-    color: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)'
+    marginRight: theme.spacing(1)
   }
-});
+}));
 
 const EstadoProductos = () => {
   const classes = useStyles();
+  const [data, setRefresh] = useGet(
+    'https://pacific-mesa-11643.herokuapp.com/api/products/ventas/list'
+  );
+
+  const statusColors = obje => {
+    if (obje.stock > obje.min && obje.stock < obje.min + 100) {
+      return 'info';
+    }
+    if (obje.stock >= obje.min + 100) {
+      return 'success';
+    }
+    return 'danger';
+  };
+
+  // const statusColors = {
+  //   delivered: 'success', comprar
+  //   pending: 'info',       normal
+  //   refunded: 'danger'     no comprar
+  // };
   const [columns] = useState([
     {
       title: 'Cod. Producto',
@@ -20,24 +39,27 @@ const EstadoProductos = () => {
     {
       title: 'Estado',
       field: 'status',
-      render: rowData => (
-        <LinearProgress
-          className={classes.status}
-          value={rowData.status}
-          variant="determinate"
-        />
-      )
+      render: rowData => {
+        console.log(rowData);
+        return (
+          <div style={{ textAlign: 'center' }}>
+            <StatusBullet
+              className={classes.status}
+              color={statusColors(rowData)}
+              size="sm"
+            />
+          </div>
+        );
+      }
     }
   ]);
 
-  const [data, setRefresh, setData] = useGet(
-    'https://pacific-mesa-11643.herokuapp.com/api/products/ventas/list'
-  );
+  console.log(data);
 
-  if(!data){
-      return <div>cargdndo... </div>
+  if (!data) {
+    return <div>cargdndo... </div>;
   }
- 
+
   return (
     <MaterialTable
       actions={[
@@ -45,7 +67,7 @@ const EstadoProductos = () => {
           icon: 'refresh',
           tooltip: 'Refresh Data',
           isFreeAction: true,
-          onClick: () => alert('hola')
+          onClick: () => setRefresh(Math.random())
         }
       ]}
       columns={columns}

@@ -54,7 +54,6 @@ const CustomRouterLink = forwardRef((props, ref) => (
 ));
 
 const SidebarNav = props => {
-
   const { state } = useContext(StoreContext);
 
   const [data] = useGet(
@@ -65,8 +64,13 @@ const SidebarNav = props => {
 
   const classes = useStyles();
 
-  if(!data){
-    return <div style={{textAlign: "center"}}> <CircularProgress /> </div>
+  if (!data) {
+    return (
+      <div style={{ textAlign: 'center' }}>
+        {' '}
+        <CircularProgress />{' '}
+      </div>
+    );
   }
 
   return (
@@ -96,8 +100,7 @@ const SidebarNav = props => {
 };
 
 SidebarNav.propTypes = {
-  className: PropTypes.string,
-  pages: PropTypes.array.isRequired
+  className: PropTypes.string
 };
 
 export default SidebarNav;

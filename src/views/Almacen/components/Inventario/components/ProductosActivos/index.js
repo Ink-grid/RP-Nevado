@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import MaterialTable from 'material-table';
-import { useGet } from '../../../../../../services/useService';
+import { useGet } from 'services';
 
 const ProductosActivos = () => {
   const [columns] = useState([
@@ -9,7 +9,7 @@ const ProductosActivos = () => {
     { title: 'Precio Unitario', field: 'precio_uni' }
   ]);
 
-  const [data, setRefresh, setData] = useGet(
+  const [data, setRefresh] = useGet(
     'https://pacific-mesa-11643.herokuapp.com/api/products/ventas/list'
   );
 

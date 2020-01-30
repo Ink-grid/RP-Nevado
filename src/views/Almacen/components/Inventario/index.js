@@ -172,7 +172,7 @@ const Inventario = () => {
   return (
     <div>
       {entrada && (
-        <div>
+        <div style={{padding: "1em"}}>
           {/* <ModuleInventario codigo={cod_prodcu} /> */}
           <FloatingActionButtons codigo={cod_prodcu} />
         </div>
