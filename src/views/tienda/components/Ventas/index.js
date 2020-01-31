@@ -52,7 +52,7 @@ const Ventas = () => {
 
 		]
 	)
-	const [data, setData] = useState(
+const [data, setData] = useState(
 		[
 			{ codigo: "producto1", precio: "20.5", stock: 10, cantidad: 20 },
 			{ codigo: "producto2", precio: "10.5", stock: 11, cantidad: 61 },
