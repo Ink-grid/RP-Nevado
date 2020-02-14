@@ -38,8 +38,8 @@ function Cart(props) {
     <Card className={classes.card}>
       <CardMedia
         className={classes.cover}
-        image="https://ae01.alicdn.com/kf/HTB1tzVYaODxK1RjSsphq6zHrpXaP/Hombre-invierno-alpinismo-al-aire-libre-esqu-senderismo-caza-termal-zapatos-para-campo-nevado-pesca-caliente.jpg_q50.jpg"
-        title="Live from space album cover"
+        image={props.img}
+        title="nevado store"
       />
       <div className={classes.details}>
         <CardContent className={classes.content}>
@@ -53,19 +53,13 @@ function Cart(props) {
             component="h5"
             variant="h5"
           >
-            Precio: S/. {props.total}
-          </Typography>
-          <Typography
-            component="h5"
-            variant="h5"
-          >
             Cantidad: {props.order}
           </Typography>
           <Typography
             color="textSecondary"
             variant="subtitle1"
           >
-            $ {props.total} ({props.order} productos)
+            ({props.order} productos)
           </Typography>
         </CardContent>
       </div>

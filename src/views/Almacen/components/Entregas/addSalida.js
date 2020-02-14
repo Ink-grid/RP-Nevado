@@ -1,6 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { LinearIndeterminate } from '../UtilsModel/';
+import { LinearIndeterminate } from 'components/UtilsModel/';
 import Divider from '@material-ui/core/Divider';
 import Grid from '@material-ui/core/Grid';
 import Paper from '@material-ui/core/Paper';
@@ -11,6 +11,7 @@ import NumberFormat from 'react-number-format';
 import Button from '@material-ui/core/Button';
 import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
+import { post } from 'services/'
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,7 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
   paper: {
     position: 'absolute',
-    width: 700,
+    width: 500,
     backgroundColor: theme.palette.background.paper,
    // boxShadow: theme.shadows[5]
   },
@@ -74,7 +75,10 @@ function getModalStyle() {
   };
 }
 
-const AddEntradas = props => {
+const AddSalidas = props => {
+
+    console.log(props)
+
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
@@ -103,12 +107,6 @@ const AddEntradas = props => {
     getDates()
   );  
 
-  const replaceString = str => {
-    let res = str.replace(/S\/\./g, '');
-    let nuevo = res.replace(/,/g, '').replace(/ /g, '');
-    return nuevo;
-  };
-
   const handleDateChange = date => {
     setSelectedDate(date);
   };
@@ -129,27 +127,16 @@ const AddEntradas = props => {
     e.preventDefault();
     const form = new FormData(e.target);
     const Data = {
-      cod_producto: props.codigo,
+      cod_producto: props.data.cod_producto,
       fecha: form.get('data'),
       descripcion: form.get('Descripcion'),
-      fabricante: form.get('fabricante') ,
-      ruc_fabricante: form.get('rucfabricante'),
-      procedencia: form.get('procedencia'),
-      valor_uni: parseInt(replaceString(form.get('valor_uni'))),
+      cod_tienda: (form.get('cod_tienda')),
       cantidad: parseInt(form.get('cantidad'))
     };
     setProgress(true);
     try {
-      const response = await fetch('https://pacific-mesa-11643.herokuapp.com/api/compras', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Data)
-      });
-      const data = await response.json();
-      console.log(data);
-      if (data.status) {
+      const response = await post('https://pacific-mesa-11643.herokuapp.com/api/ventas',Data)
+      if (response.status) {
         setProgress(false);
         setSeverity('success');
         setOpen(true);
@@ -183,7 +170,7 @@ const AddEntradas = props => {
         >
            {progress && <LinearIndeterminate />}
           <Paper style={{padding: "1em"}} elevation={3} > 
-          <Alert severity="info">REGISTRO DE COMPRA — {props.codigo}</Alert>
+          <Alert severity="info">REGISTRO DE ENTREGA — {props.data ? props.data.cod_producto : null}</Alert>
           <br></br>
           <Paper style={{padding: "1em"}} elevation={3}> 
           <form
@@ -214,7 +201,7 @@ const AddEntradas = props => {
           label="Codigo Producto:"
           fullWidth
           disabled
-          defaultValue={props.codigo}
+          defaultValue={props.data ? props.data.cod_producto : null}
           InputLabelProps={{
             shrink: true,
           }}
@@ -233,53 +220,6 @@ const AddEntradas = props => {
 						required
 					/>
           </Grid>
-
-          
-        
-        <Grid item xs={12}>
-        <Divider />
-        </Grid>
-
-        <Grid item xs={6}>
-          <TextField
-          id="outlined-number"
-          label="FABRICANTE"
-          fullWidth
-          name="fabricante"
-          placeholder="Nombre del fabricante"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          variant="outlined"
-        />
-        </Grid>
-        <Grid item xs={6}>
-          <TextField
-          id="outlined-number"
-          label="RUC"
-          name="rucfabricante"
-          fullWidth
-          placeholder="RUC del proveedor"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          variant="outlined"
-        />
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-          id="outlined-number"
-          fullWidth
-          label="PROCEDENCIA"
-          name="procedencia"
-          placeholder="Lugar de procedencia"
-          InputLabelProps={{
-            shrink: true,
-          }}
-          variant="outlined"
-        />
-        </Grid>
           
         <Grid item xs={12}>
         <Divider />
@@ -287,17 +227,12 @@ const AddEntradas = props => {
 
         <Grid item xs={6}>
         <TextField
-                  id="formatted-numberformat-input"
-                  InputProps={{
-                    inputComponent: NumberFormatCustom
-                  }}
-                  label="valor unitario"
+                  label="Codigo Tienda"
                   variant='outlined'
                   fullWidth
-                  name="valor_uni"
-                  onChange={handleChange('numberformat')}
+                  defaultValue={props.cod_tienda}
+                  name="cod_tienda"
                   required
-                  value={values}
                 />
         </Grid>
 
@@ -309,6 +244,7 @@ const AddEntradas = props => {
                   }}
                   fullWidth
                   label="Cantidad"
+                  defaultValue={props.data ? props.data.order : null}
                   name="cantidad"
                   required
                   variant='outlined'
@@ -342,14 +278,14 @@ const AddEntradas = props => {
             onClose={handleClose}
             severity="success"
           >
-            se ingreso con exito la compra
+            Se registro con exito la entrega del pedido
           </Alert>
         ) : (
           <Alert
             onClose={handleClose}
             severity="error"
           >
-            ocurrio un error al ingresar la compra
+            Ocurrio un error al ingresar el pedido
           </Alert>
         )}
       </Snackbar>
@@ -357,4 +293,4 @@ const AddEntradas = props => {
   );
 };
 
-export default AddEntradas;
+export default AddSalidas;

@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { StoreContext } from '../../../../context/StoreContext';
-import { auth } from '../../../../utils/firebase';
+import { auth, database } from '../../../../utils/firebase';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { AppBar, Toolbar, Badge, Hidden, IconButton } from '@material-ui/core';
@@ -24,21 +24,66 @@ const useStyles = makeStyles(theme => ({
 
 const Topbar = props => {
   const { className, onSidebarOpen, ...rest } = props;
-  const { actions } = useContext(StoreContext);
+  const { state, actions } = useContext(StoreContext);
   const classes = useStyles();
 
-  const [notifications] = useState([]);
+  const [notifications, setNotification] = useState([]);
+  const [refresh, setRefresh] = useState(null);
+  useEffect(() => {
+    actions.setPedidos(notifications);
+  }, [notifications]);
+
+  // const getPedidos = async () => {
+  //   const pedidos = await database
+  //     .ref('NevadoStore/Pedidos')
+  //     .orderByChild('status')
+  //     .equalTo(false)
+  //     .once('value');
+  //   if (pedidos.val()) {
+  //     const arrayPedidos = Object.values(pedidos.val());
+  //     setNotification(arrayPedidos);
+  //     actions.setRefresh(setRefresh);
+  //   }
+  // };
+
+  const getChildPedidos = () => {
+    database
+      .ref('NevadoStore/Pedidos')
+      .orderByChild('status')
+      .equalTo(false)
+      .once('value', function(snap) {
+        if (snap.val()) {
+          const arrayPedidos = Object.values(snap.val());
+          setNotification(arrayPedidos);
+        } else {
+          setNotification([]);
+        }
+      });
+
+    actions.setRefresh(setRefresh);
+  };
+
+  useEffect(() => {
+    getChildPedidos();
+    // getPedidos();
+  }, [refresh]);
 
   const logout = async () => {
     try {
       await auth().signOut();
       actions.setLogin(false);
       actions.setUser({ displayName: null });
+      actions.setRoutes(null);
+      //window.location.reload();
       //window.location = '/';
     } catch (error) {
       alert(error);
     }
   };
+
+  // useEffect(() => {
+  //   getPedidos();
+  // }, []);
 
   return (
     <AppBar
@@ -46,33 +91,39 @@ const Topbar = props => {
       className={clsx(classes.root, className)}
     >
       <Toolbar>
-        <div style={{width: "195px", textAlign: "center"}}>
-        <RouterLink to="/">
-          <img
-            alt="Logo"
-            height="66"
-            src="https://firebasestorage.googleapis.com/v0/b/ink-grid.appspot.com/o/edicion%20de%20nevado-27.png?alt=media&token=f347cf7d-81e5-4dd2-a150-a76ba01d9e6f"
-            width="115"
-          />
-        </RouterLink>
+        <div style={{ width: '195px', textAlign: 'center' }}>
+          <RouterLink to="/">
+            <img
+              alt="Logo"
+              height="66"
+              src="https://firebasestorage.googleapis.com/v0/b/ink-grid.appspot.com/o/edicion%20de%20nevado-27.png?alt=media&token=f347cf7d-81e5-4dd2-a150-a76ba01d9e6f"
+              width="115"
+            />
+          </RouterLink>
         </div>
         <div className={classes.flexGrow} />
         <Hidden mdDown>
-          <IconButton color="inherit">
-            <Badge
-              badgeContent={notifications.length}
-              color="primary"
-              variant="dot"
+          {state.user.displayName === 'almacen' && (
+            <RouterLink
+              style={{ color: '#ffffff', textDecoration: 'none' }}
+              to="/deliveries"
             >
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
+              <IconButton color="inherit">
+                <Badge
+                  badgeContent={notifications.length}
+                  color="secondary"
+                >
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </RouterLink>
+          )}
           <IconButton
             className={classes.signOutButton}
             color="inherit"
             onClick={() => logout()}
           >
-            <InputIcon  />
+            <InputIcon />
           </IconButton>
         </Hidden>
         <Hidden lgUp>

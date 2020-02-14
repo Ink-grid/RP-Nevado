@@ -1,61 +1,151 @@
-import React, { Component } from 'react';
-
-
+import React, { useContext } from 'react';
+import { Button } from '@material-ui/core';
+import { post } from 'services';
+import Tabs from '@material-ui/core/Tabs';
+import { StoreContext } from 'context/StoreContext';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 import Cart from './Cart';
 
-class CartList extends Component {
-  constructor(props) {
-    super(props);
-  }
+const CartList = props => {
+  const [value, setValue] = React.useState(0);
+  const [loading, setLoading] = React.useState({
+    isValid: false,
+    isLoading: false
+  });
+  const { state } = useContext(StoreContext);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
-  numberFormat(amount, decimals) {
-    decimals = decimals || 0;
-    if (isNaN(amount) || amount === 0) return parseFloat(0).toFixed(decimals);
-    amount = '' + amount.toFixed(decimals);
-    var amount_parts = amount.split('.'),
-      regexp = /(\d+)(\d{3})/;
-    while (regexp.test(amount_parts[0]))
-      amount_parts[0] = amount_parts[0].replace(regexp, '$1' + ',' + '$2');
-    return amount_parts.join('.');
-  }
+  function TabPanel(props) {
+    const { children, value, index, ...other } = props;
 
-  render() {
     return (
+      <Typography
+        aria-labelledby={`scrollable-auto-tab-${index}`}
+        component="div"
+        hidden={value !== index}
+        id={`scrollable-auto-tabpanel-${index}`}
+        role="tabpanel"
+        {...other}
+      >
+        {value === index && <Box p={3}>{children}</Box>}
+      </Typography>
+    );
+  }
+
+  const savePedidos = async () => {
+    setLoading({ isValid: true, isLoading: true });
+    const data = {
+      productos: props.items,
+      total: props.total,
+      cod_tienda: state.user.uid
+    };
+    try {
+      const result = await post(
+        'https://pacific-mesa-11643.herokuapp.com/api/pedidos',
+        data
+      );
+      if (result.status) {
+        setLoading({ isValid: false, isLoading: false });
+        //alert(result.message);
+        props.clearPedidos();
+        props.clearNumPedidos();
+        props.closeModal();
+        props.reponse(result.message)
+      } else {
+        setLoading({ isValid: false, isLoading: false });
+        //alert(result.message);
+        props.reponse(result.message)
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading({ isValid: false, isLoading: false });
+    }
+  };
+
+  return (
+    <div>
       <div>
-        <div>
+        {loading.isLoading && (
           <div>
-            Lista de pedidos
+            <LinearProgress />
+            <br />
           </div>
+        )}
+        <div>
+          <Typography
+            align="center"
+            component="h2"
+            variant="h1"
+          >
+            Cesta de pedidos
+          </Typography>
         </div>
-        <div style={{ padding: '2em' }}>
-          {this.props.items.map(p => {
+        <div>
+          <Typography
+            align="center"
+            component="h6"
+            variant="h5"
+          >
+            total: {props.total}
+          </Typography>
+        </div>
+      </div>
+      <div style={{ padding: '2em' }}>
+        <div>
+          {props.items.map((p, index) => {
             return (
-              <div style={{ padding: '1em' }}>
-                <Cart
-                  img={p.img}
-                  key={p.cod_producto}
-                  name={p.name}
-                  order={p.order}
-                  total={this.numberFormat(p.total)}
-                />
-              </div>
+              <TabPanel
+                index={index}
+                value={value}
+              >
+                <div style={{ padding: '1em' }}>
+                  <Cart
+                    img={p.img}
+                    key={p.cod_producto}
+                    name={p.name}
+                    order={p.order}
+                  />
+                </div>
+              </TabPanel>
             );
           })}
         </div>
-
-          <button
-            basic
-            color="green"
-            compact
-            onClick={this.props.onOpenOrder}
-            size="medium"
+        <div
+          style={{ width: '600px', display: 'flex', justifyContent: 'center' }}
+        >
+          <Tabs
+            aria-label="scrollable auto tabs example"
+            indicatorColor="primary"
+            onChange={handleChange}
+            scrollButtons="auto"
+            textColor="primary"
+            value={value}
+            variant="scrollable"
           >
-            Proceder al Pago ({this.props.total} productos)
-          </button>
+            {props.items.map((e, index) => (
+              <Tab label={index + 1} />
+            ))}
+          </Tabs>
         </div>
-      
-    );
-  }
-}
+      </div>
+
+      <Button
+        color="primary"
+        disabled={loading.isValid}
+        fullWidth
+        onClick={() => savePedidos()}
+        type="submit"
+        variant="contained"
+      >
+        Guardar
+      </Button>
+    </div>
+  );
+};
 
 export default CartList;

@@ -150,8 +150,8 @@ const SignIn = props => {
         actions.setUser(respo.user);
         actions.setLogin(true);
 
-        props.history.push('/');
-        //window.location = '/';
+        //props.history.push('/');
+        window.location = '/';
 
         setLoading(false);
       } catch (error) {

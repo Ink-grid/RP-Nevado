@@ -1,6 +1,7 @@
 /** @format */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
+import { StoreContext } from 'context/StoreContext';
 
 const useGet = urls => {
   const configServiceDefault = {
@@ -31,6 +32,44 @@ const useGet = urls => {
   }, [config, refresh]);
 
   return [data, setRefresh, setData];
+};
+
+const useRouter = urls => {
+  const configServiceDefault = {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    mode: 'cors',
+    cache: 'default'
+  };
+
+  const { state, actions } = useContext(StoreContext);
+  const [route, setRoutes] = useState(null);
+  console.log(state.routes);
+  const getRoutes = async () => {
+    try {
+      if (state.routes === null) {
+        const routes = await fetch(urls, configServiceDefault);
+        if (routes.ok) {
+          let response = await routes.json();
+          if (response.status) {
+            setRoutes(response.data);
+            actions.setRoutes(response.data);
+          }
+        }
+      } else {
+        setRoutes(state.routes);
+      }
+      // setData(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getRoutes();
+  }, []);
+
+  return [route];
 };
 
 const post = async (url, data) => {
@@ -85,4 +124,4 @@ const deleted = async url => {
   }
 };
 
-export { useGet, post, patch, deleted };
+export { useGet, useRouter, post, patch, deleted };

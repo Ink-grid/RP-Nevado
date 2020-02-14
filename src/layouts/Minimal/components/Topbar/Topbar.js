@@ -25,10 +25,12 @@ const Topbar = props => {
     >
       <Toolbar>
         <RouterLink to="/">
-          <img
-            alt="Logo"
-            src="/images/logos/logo--white.svg"
-          />
+        <img
+              alt="Logo"
+              height="66"
+              src="https://firebasestorage.googleapis.com/v0/b/ink-grid.appspot.com/o/edicion%20de%20nevado-27.png?alt=media&token=f347cf7d-81e5-4dd2-a150-a76ba01d9e6f"
+              width="115"
+            />
         </RouterLink>
       </Toolbar>
     </AppBar>

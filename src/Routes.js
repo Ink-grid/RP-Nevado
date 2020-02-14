@@ -1,11 +1,12 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { BrowserRouter, Switch, Redirect, Route } from 'react-router-dom';
 import { StoreContext } from './context/StoreContext';
 import { Main as MainLayout, Minimal as MinimalLayout } from './layouts';
-//import Inventario from './views/Inventario/';
-
 import { Clientes, InventarioTienda, Pedidos, Ventas } from './views/tienda/';
+import { useRouter } from 'services/';
 import { Inventario, Compras, Entregas } from './views/Almacen/';
+import CatalogoVirtual from './views/CatalogoVirtual/';
+import Descripcion from './views/CatalogoVirtual/Descripcion/';
 import {
   SignIn as SignInView,
   SignUp as SignUpView,
@@ -15,22 +16,138 @@ import {
 const Routes = () => {
   const { state } = useContext(StoreContext);
 
+  const [route] = useRouter(
+    `https://pacific-mesa-11643.herokuapp.com/api/users/${
+      state.user ? state.user.displayName : null
+    }`
+  );
+
+  const returnComponente = name => {
+    switch (name) {
+      case 'InventarioTienda':
+        return (
+          <MainLayout>
+            <InventarioTienda />
+          </MainLayout>
+        );
+      case 'Ventas':
+        return (
+          <MainLayout>
+            <Ventas />
+          </MainLayout>
+        );
+      case 'Pedidos':
+        return (
+          <MainLayout>
+            <Pedidos />
+          </MainLayout>
+        );
+      case 'Clientes':
+        return (
+          <MainLayout>
+            <Clientes />
+          </MainLayout>
+        );
+      case 'Inventario':
+        return (
+          <MainLayout>
+            <Inventario />
+          </MainLayout>
+        );
+      case 'Entregas':
+        return (
+          <MainLayout>
+            <Entregas />
+          </MainLayout>
+        );
+
+      case 'usarios':
+        return (
+          <MainLayout>
+            <SignUpView />
+          </MainLayout>
+        );
+
+      case 'catalogo':
+        return <CatalogoVirtual />;
+
+      case 'descripcion-catalogo':
+        return (
+          <MinimalLayout>
+            <Descripcion />
+          </MinimalLayout>
+        );
+      default:
+        break;
+    }
+  };
+
+  if (!route) {
+    if (!state.user) {
+      return <SignInView />;
+    }
+
+    if (!state.login) {
+      return <SignInView />;
+    }
+    return <div>cargando...</div>;
+  }
+
   return (
     <BrowserRouter>
       <Switch>
-        <Route
+        {/* <Redirect
+          exact
+          from="/"
+          to="/catalogo-virtual"
+        /> */}
+
+        {route.map((eleme, index) => {
+          return (
+            <Route
+              exact
+              key={index}
+              path={eleme.href}
+              render={() =>
+                state.login ? returnComponente(eleme.component) : <SignInView />
+              }
+            />
+          );
+        })}
+        {/* <Route
           exact
           path="/"
-          render={() =>
-            state.login ? (
-              <MainLayout>
-                <Inventario />
-              </MainLayout>
-            ) : (
-              <SignInView />
-            )
-          }
-        />
+          render={() => {
+            if (state.login) {
+              switch (state.user.displayName) {
+                case 'almacen':
+                  return (
+                    <MainLayout>
+                      <Inventario />
+                    </MainLayout>
+                  );
+
+                case 'tienda01':
+                  return (
+                    <MainLayout>
+                      <InventarioTienda />
+                    </MainLayout>
+                  );
+
+                default:
+                  return (
+                    <MainLayout>
+                      <Inventario />
+                    </MainLayout>
+                  );
+              }
+            } else {
+              return <SignInView />;
+            }
+          }}
+        /> */}
+        {/* /* // state.login && state.user.displayName === 'almacen' ? ( // ) : ( //
+        // ) } /> */}
         <Route
           path="/not-found"
           render={() => (
@@ -40,6 +157,11 @@ const Routes = () => {
           )}
         />
 
+        {/* <Route
+          path="/catalogo-virtual"
+          render={() => <CatalogoVirtual />}
+        /> */}
+        {/* 
         <Route
           path="/register-user"
           render={() => (
@@ -47,8 +169,8 @@ const Routes = () => {
               <SignUpView />
             </MainLayout>
           )}
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/inventory"
           render={() =>
             state.login ? (
@@ -59,11 +181,9 @@ const Routes = () => {
               <SignInView />
             )
           }
-        />
-
+        /> */}
         {/* rutas de almacen */}
-
-        <Route
+        {/* <Route
           path="/inventory"
           render={() =>
             state.login ? (
@@ -100,11 +220,10 @@ const Routes = () => {
               <SignInView />
             )
           }
-        />
-
+        /> */}
         {/* fin rutas almacen */}
         {/*rutas de tienda */}
-        <Route
+        {/* <Route
           exact
           path="/inventory-shop"
           render={() =>
@@ -155,7 +274,7 @@ const Routes = () => {
               <SignInView />
             )
           }
-        />
+        /> */}
         {/*fin rutas de tienda */}
         <Redirect to="/not-found" />
       </Switch>

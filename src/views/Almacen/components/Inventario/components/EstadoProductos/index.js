@@ -61,24 +61,46 @@ const EstadoProductos = () => {
   }
 
   return (
-    <MaterialTable
-      actions={[
-        {
-          icon: 'refresh',
-          tooltip: 'Refresh Data',
-          isFreeAction: true,
-          onClick: () => setRefresh(Math.random())
-        }
-      ]}
-      columns={columns}
-      data={data.data}
-      localization={{
-        pagination: {
-          labelRowsSelect: 'filas'
-        }
-      }}
-      title="Estado"
-    />
+    <div>
+      <div style={{ paddingBottom: '1em' }}>
+        <StatusBullet
+          className={classes.status}
+          color="danger"
+          size="sm"
+        />
+        Comprar &nbsp; &nbsp;
+        <StatusBullet
+          className={classes.status}
+          color="info"
+          size="sm"
+        />
+        Normal &nbsp; &nbsp;
+        <StatusBullet
+          className={classes.status}
+          color="success"
+          size="sm"
+        />
+        No comprar
+      </div>
+      <MaterialTable
+        actions={[
+          {
+            icon: 'refresh',
+            tooltip: 'Refresh Data',
+            isFreeAction: true,
+            onClick: () => setRefresh(Math.random())
+          }
+        ]}
+        columns={columns}
+        data={data.data}
+        localization={{
+          pagination: {
+            labelRowsSelect: 'filas'
+          }
+        }}
+        title="Estado"
+      />
+    </div>
   );
 };
 

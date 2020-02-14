@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/styles';
 import { getIcons } from '../../../../../../utils/Libs';
-import { useGet } from '../../../../../../services/useService';
+import { useRouter } from 'services/';
 import { StoreContext } from '../../../../../../context/StoreContext';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { List, ListItem, Button, colors } from '@material-ui/core';
@@ -56,7 +56,7 @@ const CustomRouterLink = forwardRef((props, ref) => (
 const SidebarNav = props => {
   const { state } = useContext(StoreContext);
 
-  const [data] = useGet(
+  const [route] = useRouter(
     `https://pacific-mesa-11643.herokuapp.com/api/users/${state.user.displayName}`
   );
 
@@ -64,11 +64,10 @@ const SidebarNav = props => {
 
   const classes = useStyles();
 
-  if (!data) {
+  if (!route) {
     return (
       <div style={{ textAlign: 'center' }}>
-        {' '}
-        <CircularProgress />{' '}
+        <CircularProgress />
       </div>
     );
   }
@@ -78,23 +77,25 @@ const SidebarNav = props => {
       {...rest}
       className={clsx(classes.root, className)}
     >
-      {data.data.map(page => (
-        <ListItem
-          className={classes.item}
-          disableGutters
-          key={page.title}
-        >
-          <Button
-            activeClassName={classes.active}
-            className={classes.button}
-            component={CustomRouterLink}
-            to={page.href}
+      {route
+        .filter(ele => ele.href !== '/')
+        .map(page => (
+          <ListItem
+            className={classes.item}
+            disableGutters
+            key={page.title}
           >
-            <div className={classes.icon}>{getIcons(page.icon)}</div>
-            {page.title}
-          </Button>
-        </ListItem>
-      ))}
+            <Button
+              activeClassName={classes.active}
+              className={classes.button}
+              component={CustomRouterLink}
+              to={page.href}
+            >
+              <div className={classes.icon}>{getIcons(page.icon)}</div>
+              {page.title}
+            </Button>
+          </ListItem>
+        ))}
     </List>
   );
 };
